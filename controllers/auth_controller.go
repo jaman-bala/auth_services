@@ -90,7 +90,7 @@ func (ctrl *authController) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("auth_token", token, config.CookieLifetime, "/", config.CookieDomain, true, true)
+	c.SetCookie("access_token", token, config.CookieLifetime, "/", config.CookieDomain, true, true)
 
 	response := dto.AuthResponse{
 		Token:   token,

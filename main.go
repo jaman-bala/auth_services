@@ -10,7 +10,9 @@ import (
 	
 )
 
-// @title Auth Services API
+// @title API 🖥🚀
+// @version 1.0
+// @description API documentation
 func main() {
 	// Инициализация конфигурации
 	cfg, err := config.LoadConfig()

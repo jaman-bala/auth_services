@@ -28,14 +28,17 @@ func SetupRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 
 	// Инициализация репозиториев
 	userRepo := repositories.NewUserRepository(db)
+	bookRepo := repositories.NewBookRepository(db)
 
 	// Инициализация сервисов
 	authService := services.NewAuthService(userRepo, cfg)
 	userService := services.NewUserService(userRepo)
+	bookService := services.NewBookService(bookRepo)
 
 	// Инициализация контроллеров
 	authController := controllers.NewAuthController(authService)
 	userController := controllers.NewUserController(userService)
+	bookController := controllers.NewBookController(bookService)
 
 	// Публичные маршруты
 	r.POST("/api/auth/register", authController.Register)
@@ -52,6 +55,22 @@ func SetupRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 		protected.GET("/users/:id", userController.GetByID)
 		protected.PATCH("/users/:id", userController.PatchUser)
 		protected.DELETE("/users/:id", userController.DeleteUser)
+		
+		// Маршруты книги
+		protected.POST("/books", bookController.CreateBook)
+        protected.GET("/books", bookController.GetAllBooks)
+        // protected.GET("/books/:id", bookController.GetByID)
+        // protected.DELETE("/books/:id", bookController.DeleteBook)
+        // protected.PUT("/books/:id", bookController.UpdateBook)
+
+        // группа маршрутов только для авторизованных пользователей
+        authenticated := protected.Group("/authenticated")
+        authenticated.Use(middleware.RoleMiddleware("authenticated"))
+        {
+            // Здесь будут маршруты только для авторизованных пользователей
+        }
+
+        // ��руппа маршрутов только для администраторов и авторизованных пользователей
 
 		// Группа маршрутов только для администраторов
 		admin := protected.Group("/admin")

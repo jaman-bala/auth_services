@@ -6,6 +6,54 @@ definitions:
       token:
         type: string
     type: object
+  dto.BookRequest:
+    properties:
+      cover_url:
+        type: string
+      description:
+        type: string
+      file_url:
+        type: string
+      genre:
+        type: string
+      isbn:
+        type: string
+      language:
+        type: string
+      page_count:
+        type: integer
+      publish_year:
+        type: integer
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.BookResponse:
+    properties:
+      cover_url:
+        type: string
+      description:
+        type: string
+      file_url:
+        type: string
+      genre:
+        type: string
+      id:
+        type: string
+      isbn:
+        type: string
+      language:
+        type: string
+      page_count:
+        type: integer
+      publish_year:
+        type: integer
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
   dto.LoginRequest:
     properties:
       email:
@@ -65,7 +113,9 @@ definitions:
     type: object
 info:
   contact: {}
-  title: Auth Services API
+  description: API documentation
+  title: "API \U0001F5A5\U0001F680"
+  version: "1.0"
 paths:
   /api/auth/login:
     post:
@@ -169,6 +219,74 @@ paths:
       summary: Регистрация нового пользователя
       tags:
       - auth
+  /api/books:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех книг
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список книг
+          schema:
+            items:
+              $ref: '#/definitions/dto.BookResponse'
+            type: array
+        "401":
+          description: Пользователь не авторизован
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение всех книг
+      tags:
+      - Book
+    post:
+      consumes:
+      - application/json
+      description: Создаёт новую книгу
+      parameters:
+      - description: Данные книг
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список пользователей
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserResponse'
+            type: array
+        "401":
+          description: Пользователь не авторизован
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Создание книги
+      tags:
+      - Book
   /api/users/{id}:
     delete:
       consumes:

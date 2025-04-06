@@ -8,12 +8,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+    AuthorizationHeaderKey = "Authorization"
+    BearerSchema           = "Bearer "
+    AccessTokenCookieName  = "access_token"
+)
+
+
 // AuthMiddleware middleware для проверки JWT токена
 func AuthMiddleware(authService services.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Получить токен из заголовка Authorization
-		tokenString, err := c.Cookie("auth_token")
-		if err != nil || tokenString == "" {
+        var tokenString string
+
+        // Попробовать получить токен из cookie
+        cookieToken, err := c.Cookie(AccessTokenCookieName)
+        if err == nil && cookieToken != "" {
+            tokenString = cookieToken
+        } else {
+            // Если в cookie нет — пробуем из заголовка Authorization
+            authHeader := c.GetHeader(AuthorizationHeaderKey)
+            if len(authHeader) > len(BearerSchema) && authHeader[:len(BearerSchema)] == BearerSchema {
+                tokenString = authHeader[len(BearerSchema):]
+            }
+        }
+
+		// Если токен всё ещё пуст — возвращаем ошибку
+		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Отсутствует токен авторизации"})
 			c.Abort()
 			return
@@ -27,7 +47,7 @@ func AuthMiddleware(authService services.AuthService) gin.HandlerFunc {
 			return
 		}
 
-		// Устанавливаем данные пользователя в контексте
+		// Устанавливаем данные пользователя в контекст
 		c.Set("userID", claims.UserID)
 		c.Set("email", claims.Email)
 		c.Set("role", claims.Role)
@@ -35,6 +55,7 @@ func AuthMiddleware(authService services.AuthService) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
 
 // RoleMiddleware middleware для проверки роли пользователя
 func RoleMiddleware(roles ...string) gin.HandlerFunc {

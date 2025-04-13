@@ -16,7 +16,6 @@ type BookRepository interface {
 	FindByID(id uuid.UUID) (*models.Book, error)
 	FindAll() ([]models.Book, error)
 	FindByGenre(genre string) ([]models.Book, error)
-	FindByAuthor(author uuid.UUID) ([]models.Book, error)
 	Search(query string) ([]models.Book, error)
 	Patch(book *models.Book) error
 	DeleteByID(id uuid.UUID) error
@@ -65,15 +64,6 @@ func (r *bookRepository) FindByGenre(genre string) ([]models.Book, error) {
         return nil, err
     }
     return bookGenre, nil
-}
-
-func (r *bookRepository) FindByAuthor(author uuid.UUID) ([]models.Book, error) {
-    var bookAuthor []models.Book
-    err := r.db.Where("author = ?", author).Find(&bookAuthor).Error
-    if err != nil {
-        return nil, err
-    }
-    return bookAuthor, nil
 }
 
 func (r *bookRepository) Search(query string) ([]models.Book, error) {

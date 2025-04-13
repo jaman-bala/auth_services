@@ -20,6 +20,7 @@ type User struct {
 	Role      string    `gorm:"default:user" json:"role"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+
 }
 
 // BeforeSave хеширует пароль перед сохранением пользователя

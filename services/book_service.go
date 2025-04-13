@@ -14,7 +14,6 @@ type BookService interface {
 	GetAllBook() ([]*dto.BookResponse, error)
 	GetByID(id uuid.UUID) (*dto.BookResponse, error)
 	FindByGenre(genre string) ([]*dto.BookResponse, error)
-    FindByAuthor(authorID uuid.UUID) ([]*dto.BookResponse, error)
     Search(query string) ([]*dto.BookResponse, error)
     PatchBook(bookID uuid.UUID, req dto.PatchBookRequest) (*dto.BookResponse, error)
 }
@@ -129,32 +128,6 @@ func (s *bookService) FindByGenre(genre string) ([]*dto.BookResponse, error) {
 	return bookResponses, nil
 }
 
-func (s *bookService) FindByAuthor(authorID uuid.UUID) ([]*dto.BookResponse, error) {
-    books, err := s.bookRepo.FindByAuthor(authorID)
-    if err != nil {
-        return nil, err
-    }
-    if books == nil {
-        return nil, errors.New("no books found by this author")
-    }
-    var bookResponses []*dto.BookResponse
-    for _, book := range books {
-        bookResponses = append(bookResponses, &dto.BookResponse{
-            ID:          book.ID,
-            Title:       book.Title,
-            AuthorID:    book.AuthorID,
-            Description: book.Description,
-            ISBN:        book.ISBN,
-            PublishYear: book.PublishYear,
-            CoverURL:    book.CoverURL,
-            FileURL:     book.FileURL,
-            Genre:       book.Genre,
-            Language:    book.Language,
-            PageCount:   book.PageCount,
-        })
-    }
-    return bookResponses, nil
-}
 
 func (s *bookService) Search(query string) ([]*dto.BookResponse, error) {
     books, err := s.bookRepo.Search(query)

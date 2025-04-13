@@ -5,22 +5,23 @@ import (
 )
 
 type BookRequest struct {
-	Title string `json:"title"`
-	AuthorID uuid.UUID `json:"user_id"`
-	Description string `json:"description"`
-	ISBN string `json:"isbn"`
-	PublishYear int `json:"publish_year"`
-	CoverURL string `json:"cover_url"`
-	FileURL string `json:"file_url"`
-	Genre string `json:"genre"`
-	Language string `json:"language"`
-	PageCount int `json:"page_count"`
+	Title       string    `json:"title"`
+	AuthorID    uuid.UUID `json:"author_id"`
+	Description string    `json:"description"`
+	ISBN        string    `json:"isbn"`
+	PublishYear int       `json:"publish_year"`
+	CoverURL    string    `json:"cover_url"`
+	FileURL     string    `json:"file_url"`
+	Genre       string    `json:"genre"`
+	Language    string    `json:"language"`
+	PageCount   int       `json:"page_count"`
 }
+
 
 type BookResponse struct {
 	ID          uuid.UUID `json:"id"`
 	Title string `json:"title"`
-	AuthorID uuid.UUID `json:"user_id"`
+	AuthorID uuid.UUID `json:"author_id"`
 	Description string `json:"description"`
 	ISBN string `json:"isbn"`
 	PublishYear int `json:"publish_year"`

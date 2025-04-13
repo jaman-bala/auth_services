@@ -5,7 +5,7 @@ package dto
 // RegisterRequest представляет запрос на регистрацию
 type RegisterRequest struct {
 	Username  string `json:"username"`
-	Email     string `json:"email" binding:"required,email"`
+	Email     string `json:"email" binding:"required" example:"user@example.com"`
 	Password  string `json:"password" binding:"required,min=6"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`

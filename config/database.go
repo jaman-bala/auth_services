@@ -20,7 +20,11 @@ func InitDB(cfg *Config) (*gorm.DB, error) {
 	}
 
 	// Автоматическая миграция таблиц
- 	err = db.AutoMigrate(&models.User{}, &models.Book{}, &models.AuthorBook{})
+ 	err = db.AutoMigrate(
+		&models.User{},
+		&models.Book{},
+		&models.AuthorBook{},
+		)
 	if err != nil {
 		return nil, err
 	}

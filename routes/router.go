@@ -59,7 +59,8 @@ func SetupRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 		// Маршруты книги
 		protected.POST("/books", bookController.CreateBook)
         protected.GET("/books", bookController.GetAllBooks)
-        // protected.GET("/books/:id", bookController.GetByID)
+        protected.GET("/books/:id", bookController.GetByID)
+		protected.GET("/books/genre/:genre", bookController.FindByGenre)
         // protected.DELETE("/books/:id", bookController.DeleteBook)
         // protected.PUT("/books/:id", bookController.UpdateBook)
 

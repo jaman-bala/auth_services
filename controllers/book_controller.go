@@ -1,18 +1,22 @@
 package controllers
 
 import (
-    "net/http"
+	"net/http"
 
-    "AuthApplications/dto"
-    "AuthApplications/services"
+	"AuthApplications/dto"
+	"AuthApplications/services"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // BookController интерфейс для методов книги
 type BookController interface {
 	CreateBook(c *gin.Context)
     GetAllBooks(c *gin.Context)
+    GetByID(c *gin.Context)
+    FindByGenre(c *gin.Context)
+    
 }
 
 // Реализация BookController
@@ -78,3 +82,62 @@ func (bc *bookController) GetAllBooks(c *gin.Context) {
     }
     c.JSON(http.StatusOK, books)
 }
+
+
+
+// GetByID godoc
+// @Summary Получение книги по ID
+// @Description Возвращает информацию о книги по указанному ID
+// @Tags Book
+// @Accept json
+// @Produce json
+// @Param id path string true "ID книги"
+// @Security BearerAuth
+// @Success 200 {object} dto.BookResponse "Книга найден"
+// @Failure 400 {object} map[string]string "Некорректный запрос"
+// @Failure 404 {object} map[string]string "Книга не найден"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Router /api/books/{id} [get]
+func (bc *bookController) GetByID(c *gin.Context) {
+    idParam := c.Param("id")
+    id, err := uuid.Parse(idParam)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат UUID"})
+        return
+    }
+
+    book, err := bc.bookService.GetByID(id)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, book)
+}
+
+
+// FindByGenre godoc
+// @Summary Поиск книг по жанру
+// @Description Возвращает список книг по указанному жанру
+// @Tags Book
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param genre path string true "Жанр книги"
+// @Success 200 {array} dto.BookResponse "Список книг"
+// @Failure 401 {object} map[string]string "Пользователь не авторизован"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Router /api/books/genre/{genre} [get]
+func (bc *bookController) FindByGenre(c *gin.Context) {
+    genre := c.Param("genre")
+
+    books, err := bc.bookService.FindByGenre(genre)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, books)
+}
+
+

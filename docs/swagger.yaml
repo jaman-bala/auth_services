@@ -8,6 +8,8 @@ definitions:
     type: object
   dto.BookRequest:
     properties:
+      author_id:
+        type: string
       cover_url:
         type: string
       description:
@@ -26,11 +28,11 @@ definitions:
         type: integer
       title:
         type: string
-      user_id:
-        type: string
     type: object
   dto.BookResponse:
     properties:
+      author_id:
+        type: string
       cover_url:
         type: string
       description:
@@ -50,8 +52,6 @@ definitions:
       publish_year:
         type: integer
       title:
-        type: string
-      user_id:
         type: string
     type: object
   dto.LoginRequest:
@@ -82,6 +82,7 @@ definitions:
   dto.RegisterRequest:
     properties:
       email:
+        example: user@example.com
         type: string
       first_name:
         type: string
@@ -285,6 +286,84 @@ paths:
       security:
       - BearerAuth: []
       summary: Создание книги
+      tags:
+      - Book
+  /api/books/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию о книги по указанному ID
+      parameters:
+      - description: ID книги
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Книга найден
+          schema:
+            $ref: '#/definitions/dto.BookResponse'
+        "400":
+          description: Некорректный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Книга не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение книги по ID
+      tags:
+      - Book
+  /api/books/genre/{genre}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список книг по указанному жанру
+      parameters:
+      - description: Жанр книги
+        in: path
+        name: genre
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список книг
+          schema:
+            items:
+              $ref: '#/definitions/dto.BookResponse'
+            type: array
+        "401":
+          description: Пользователь не авторизован
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Поиск книг по жанру
       tags:
       - Book
   /api/users/{id}:
